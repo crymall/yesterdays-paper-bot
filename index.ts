@@ -12,13 +12,12 @@ const agent = new AtpAgent({
 
 const extraFilteredWords = process.env
   .EXTRA_FILTERED_WORDS!.split(",")
-  .map((item) => item.trim());
+  .map((item) => item.trim())
+  .filter((item) => item.length > 0);
 const permittedWords = process.env
   .PERMITTED_WORDS!.split(",")
-  .map((item) => item.trim());
-
-console.log(extraFilteredWords);
-console.log(permittedWords);
+  .map((item) => item.trim())
+  .filter((item) => item.length > 0);
 
 const filter = new Filter();
 filter.addWords(...extraFilteredWords);
@@ -56,8 +55,7 @@ async function main() {
     const nytData: NYTArticle[] = request.data.response.docs;
     const headlinesArr: string[] = nytData
       .map((el) => el.headline.main)
-      // .filter((headline) => filter.isProfane(headline));
-    console.log("HEADLINES", headlinesArr);
+      .filter((headline) => filter.isProfane(headline));
 
     if (headlinesArr.length === 0) {
       throw new Error("No headlines found");
@@ -66,10 +64,10 @@ async function main() {
     const randomHeadline =
       headlinesArr[Math.floor(Math.random() * headlinesArr.length)];
 
-    // await agent.post({
-    //   text: randomHeadline!,
-    //   createdAt: new Date().toISOString(),
-    // });
+    await agent.post({
+      text: randomHeadline!,
+      createdAt: new Date().toISOString(),
+    });
 
     console.log("Post sent successfully!");
   } catch (error) {
