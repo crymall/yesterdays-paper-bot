@@ -53,7 +53,8 @@ async function main() {
     const nytData: NYTArticle[] = request.data.response.docs;
     const headlinesArr: string[] = nytData
       .map((el) => el.headline.main)
-      .filter((headline) => filter.isProfane(headline));
+      // .filter((headline) => filter.isProfane(headline));
+    console.log("HEADLINES", headlinesArr);
 
     if (headlinesArr.length === 0) {
       throw new Error("No headlines found");
@@ -62,10 +63,10 @@ async function main() {
     const randomHeadline =
       headlinesArr[Math.floor(Math.random() * headlinesArr.length)];
 
-    await agent.post({
-      text: randomHeadline!,
-      createdAt: new Date().toISOString(),
-    });
+    // await agent.post({
+    //   text: randomHeadline!,
+    //   createdAt: new Date().toISOString(),
+    // });
 
     console.log("Post sent successfully!");
   } catch (error) {
