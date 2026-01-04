@@ -55,7 +55,7 @@ async function main() {
     const nytData: NYTArticle[] = request.data.response.docs;
     const headlinesArr: string[] = nytData
       .map((el) => el.headline.main)
-      .filter((headline) => filter.isProfane(headline));
+      .filter((headline) => !filter.isProfane(headline));
 
     if (headlinesArr.length === 0) {
       throw new Error("No headlines found");
