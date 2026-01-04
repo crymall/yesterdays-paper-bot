@@ -17,6 +17,9 @@ const permittedWords = process.env
   .PERMITTED_WORDS!.split(",")
   .map((item) => item.trim());
 
+console.log(extraFilteredWords);
+console.log(permittedWords);
+
 const filter = new Filter();
 filter.addWords(...extraFilteredWords);
 filter.removeWords(...permittedWords);
