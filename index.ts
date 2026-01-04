@@ -1,6 +1,7 @@
 import { AtpAgent } from "@atproto/api";
 import * as dotenv from "dotenv";
 import axios from "axios";
+import { Filter } from "bad-words";
 import type { NYTArticle } from "./interfaces.js";
 
 dotenv.config();
@@ -8,6 +9,17 @@ dotenv.config();
 const agent = new AtpAgent({
   service: "https://bsky.social",
 });
+
+const extraFilteredWords = process.env
+  .EXTRA_FILTERED_WORDS!.split(",")
+  .map((item) => item.trim());
+const permittedWords = process.env
+  .PERMITTED_WORDS!.split(",")
+  .map((item) => item.trim());
+
+const filter = new Filter();
+filter.addWords(...extraFilteredWords);
+filter.removeWords(...permittedWords);
 
 async function main() {
   try {
@@ -34,17 +46,21 @@ async function main() {
       .replace(/-/g, "");
 
     const request = await axios.get(
-      `https://api.nytimes.com/svc/search/v2/articlesearch.json?start_date=${oneHundredYearsAgo}&end_date=${thatButTomorrow}&api-key=${process.env.NYT_API_KEY!}`
+      `https://api.nytimes.com/svc/search/v2/articlesearch.json?start_date=${oneHundredYearsAgo}&end_date=${thatButTomorrow}&api-key=${process
+        .env.NYT_API_KEY!}`
     );
 
     const nytData: NYTArticle[] = request.data.response.docs;
-    const headlinesArr: string[] = nytData.map((el) => el.headline.main);
+    const headlinesArr: string[] = nytData
+      .map((el) => el.headline.main)
+      .filter((headline) => filter.isProfane(headline));
 
     if (headlinesArr.length === 0) {
       throw new Error("No headlines found");
     }
 
-    const randomHeadline = headlinesArr[Math.floor(Math.random() * headlinesArr.length)];
+    const randomHeadline =
+      headlinesArr[Math.floor(Math.random() * headlinesArr.length)];
 
     await agent.post({
       text: randomHeadline!,

@@ -27,3 +27,5 @@ jobs:
           BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
           BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
           NYT_API_KEY: ${{ secrets.NYT_API_KEY }}
+          EXTRA_FILTERED_WORDS: ${{ secrets.EXTRA_FILTERED_WORDS }}
+          PERMITTED_WORDS: ${{ secrets.PERMITTED_WORDS }}
